@@ -39,13 +39,13 @@ void main() {
     // 让变暗的区域更柔和
     intensity = smoothstep(0.0, 1.0, intensity);
     intensity = clamp(intensity, 0.0, 1.0);
-    intensity *= 0.1;
+    intensity *= 0.5;
 
-    vec3 color = vec3(1.0) * intensity ;
+    vec4 color = vec4(1.0) * intensity ;
 
 
 
-    gl_FragColor = vec4(color,1.0);
+    gl_FragColor = color;
 
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
