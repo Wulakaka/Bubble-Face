@@ -27,10 +27,10 @@ vec3 coneIntersectionFromOrigin(vec3 position, vec3 vecA, vec3 vecB, float theta
     return intersection;
 }
 // 计算由 vecA 定义的锥体与从原点出发的 vecB 的交点
-float coneIntersectionFromOrigin2(vec3 position, vec3 vecA, vec3 vecB, float cosTheta) {
+float coneIntersectionFromOrigin2(vec3 position, vec3 vecA, vec3 vecB, float theta) {
     vec3 unitA = normalize(vecA);
     vec3 unitB = normalize(vecB);
-//    float cosTheta = cos(theta);
+    float cosTheta = cos(theta);
 
     // 参数化 vecB
     // t * vecB = P(t)
@@ -77,16 +77,17 @@ void main() {
     vec3 direction = vec3(30.0, 0.0, 0.0) - vPosition;
     direction = normalize(direction);
     float theta = dot(direction, normal);
-//    theta = acos(theta);
-//    theta = sin(theta);
-    float rate = 0.7;
-//    theta *= rate;
-//    theta = asin(theta);
-    float d = coneIntersectionFromOrigin2(vPosition, -normal, normalize(vec3(0.0, normal.y, normal.z)), theta);
-//    float d = distance(intersection, vec3(0.0));
+    theta = acos(theta);
+    theta = sin(theta);
+    float rate = 1.7;
+    theta *= rate;
+    theta = asin(theta);
+//    theta = cos(theta);
+    vec3 intersection = coneIntersectionFromOrigin(vPosition, normal, normalize(vec3(0.0, vPosition.y, vPosition.z)), theta);
+    float d = distance(intersection, vec3(0.0,-10.0,0.0));
 
-    vec4 color = vec4(1.0) * intensity ;
-    if(d < 0.1) {
+    vec4 color = vec4(1.0) * intensity;
+    if(d < 10.0) {
         color = vec4(1.0, 0.0, 0.0, 1.0);
     }
 

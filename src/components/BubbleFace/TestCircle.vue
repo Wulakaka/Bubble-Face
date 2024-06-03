@@ -9,7 +9,7 @@ const uniforms = {
 </script>
 
 <template>
-  <TresMesh :rotate-y="Math.PI / 2" :position="[-10, 10, 0]">
+  <TresMesh :rotate-y="Math.PI / 2" :position="[0, 10, 0]">
     <TresPlaneGeometry :args="[10, 10, 16, 16]"></TresPlaneGeometry>
     <TresShaderMaterial
       :vertex-shader="circleVertexShader"
