@@ -3,7 +3,7 @@ import * as THREE from 'three'
 const spherical = new THREE.Spherical(10, Math.PI / 2, 0)
 const position = new THREE.Vector3()
 position.setFromSpherical(spherical)
-console.log(position)
+// console.log(position)
 </script>
 
 <template>
