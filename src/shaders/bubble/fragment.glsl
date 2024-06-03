@@ -9,6 +9,39 @@ float remap(float value, float originMin, float originMax, float destinationMin,
     return destinationMin + (value - originMin) * (destinationMax - destinationMin) / (originMax - originMin);
 }
 
+// 计算由 vecA 定义的锥体与从原点出发的 vecB 的交点
+vec3 coneIntersectionFromOrigin(vec3 position, vec3 vecA, vec3 vecB, float theta) {
+    vec3 unitA = normalize(vecA);
+    vec3 unitB = normalize(vecB);
+    float cosTheta = cos(theta);
+
+    // 参数化 vecB
+    // t * vecB = P(t)
+
+    // 锥体方程：dot(unitA, normalize(P(t) - position)) = cosTheta
+    // 展开并解 t
+    float t = (cosTheta * length(position) - dot(unitA, position)) / dot(unitA, vecB);
+
+    // 计算交点
+    vec3 intersection = t * vecB;
+    return intersection;
+}
+// 计算由 vecA 定义的锥体与从原点出发的 vecB 的交点
+float coneIntersectionFromOrigin2(vec3 position, vec3 vecA, vec3 vecB, float cosTheta) {
+    vec3 unitA = normalize(vecA);
+    vec3 unitB = normalize(vecB);
+//    float cosTheta = cos(theta);
+
+    // 参数化 vecB
+    // t * vecB = P(t)
+
+    // 锥体方程：dot(unitA, normalize(P(t) - position)) = cosTheta
+    // 展开并解 t
+    float t = (cosTheta * length(position) - dot(unitA, position)) / dot(unitA, vecB);
+
+    return t;
+}
+
 
 
 void main() {
@@ -41,7 +74,21 @@ void main() {
     intensity = clamp(intensity, 0.0, 1.0);
     intensity *= 0.5;
 
+    vec3 direction = vec3(30.0, 0.0, 0.0) - vPosition;
+    direction = normalize(direction);
+    float theta = dot(direction, normal);
+//    theta = acos(theta);
+//    theta = sin(theta);
+    float rate = 0.7;
+//    theta *= rate;
+//    theta = asin(theta);
+    float d = coneIntersectionFromOrigin2(vPosition, -normal, normalize(vec3(0.0, normal.y, normal.z)), theta);
+//    float d = distance(intersection, vec3(0.0));
+
     vec4 color = vec4(1.0) * intensity ;
+    if(d < 0.1) {
+        color = vec4(1.0, 0.0, 0.0, 1.0);
+    }
 
 
 
