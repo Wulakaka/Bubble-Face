@@ -44,7 +44,6 @@ void main() {
     intensity = clamp(intensity, 0.0, 1.0);
     intensity *= 0.5;
     vec4 color = vec4(1.0) * intensity;
-    gl_FragColor = color;
 
 
     // 此 camera position 为最终锁定的摄像机位置
@@ -68,14 +67,13 @@ void main() {
 
     // 检查折射点是否在圆内
     if (length(refractPoint - circleCenter) < circleRadius) {
-        gl_FragColor = vec4(1, 0, 0, 1); // 在圆内部，显示红色
-    } else {
-//        gl_FragColor = vec4(0, 0, 1, 1); // 在圆外部，显示蓝色
+        // 夹角小于九十度才显示
+        if(dot(viewDir, normal) < 0.0) {
+            color = vec4(1, 0, 0, 1); // 在圆内部，显示红色
+        }
     }
 
-
-
-//    gl_FragColor = FragColor;
+    gl_FragColor = color;
 
     #include <tonemapping_fragment>
     #include <colorspace_fragment>
