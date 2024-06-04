@@ -15,7 +15,7 @@ const { onLoop } = useRenderLoop()
 
 onLoop(({ delta, elapsed }) => {
   // 将在每一帧运行 ~ 60FPS（取决于您的显示器）
-  refMesh.value.position.y = (elapsed * 2) % 15
+  refMesh.value.position.y = -15 + ((elapsed * 2) % 30)
 })
 
 const refMesh = ref()

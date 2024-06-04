@@ -16,7 +16,7 @@ const { onLoop } = useRenderLoop()
 
 onLoop(({ delta, elapsed }) => {
   // 将在每一帧运行 ~ 60FPS（取决于您的显示器）
-  uniforms.uCircleCenter.value.y = (elapsed * 2) % 15
+  uniforms.uCircleCenter.value.y = -15 + ((elapsed * 2) % 30)
 })
 </script>
 

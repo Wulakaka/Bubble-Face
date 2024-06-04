@@ -69,7 +69,7 @@ void main() {
     if (length(refractPoint - circleCenter) < circleRadius) {
         // 夹角小于九十度才显示
         if(dot(viewDir, normal) < 0.0) {
-//            color = vec4(1, 0, 0, 1); // 在圆内部，显示红色
+            color = vec4(1, 0, 0, 1); // 在圆内部，显示红色
         }
     }
 
