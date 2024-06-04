@@ -28,6 +28,7 @@ onLoop(({ delta, elapsed }) => {
       :vertex-shader="bubbleVertexShader"
       :fragment-shader="bubbleFragmentShader"
       :uniforms="uniforms"
+      :depth-write="false"
     />
   </TresMesh>
 </template>

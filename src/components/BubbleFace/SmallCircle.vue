@@ -6,7 +6,9 @@ import { useRenderLoop } from '@tresjs/core'
 import { ref } from 'vue'
 
 const uniforms = {
-  uSize: new THREE.Uniform(new THREE.Vector2(2, 2))
+  uSize: new THREE.Uniform(new THREE.Vector2(2, 2)),
+  uCameraPosition: new THREE.Uniform(new THREE.Vector3(50, 0, 0)),
+  uSphereRadius: new THREE.Uniform(10)
 }
 
 const { onLoop } = useRenderLoop()
