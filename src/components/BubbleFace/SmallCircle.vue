@@ -1,15 +1,34 @@
 <script setup lang="ts">
+import circleVertexShader from '@/shaders/circle/vertex.glsl'
+import circleFragmentShader from '@/shaders/circle/fragment.glsl'
 import * as THREE from 'three'
-const spherical = new THREE.Spherical(10, Math.PI / 2, 0)
-const position = new THREE.Vector3()
-position.setFromSpherical(spherical)
-// console.log(position)
+import { useRenderLoop } from '@tresjs/core'
+import { ref } from 'vue'
+
+const uniforms = {
+  uSize: new THREE.Uniform(new THREE.Vector2(2, 2))
+}
+
+const { onLoop } = useRenderLoop()
+
+onLoop(({ delta, elapsed }) => {
+  // 将在每一帧运行 ~ 60FPS（取决于您的显示器）
+  refMesh.value.position.y = (elapsed * 2) % 15
+})
+
+const refMesh = ref()
 </script>
 
 <template>
-  <TresMesh :position="position" :look-at="[0, 0, 0]">
-    <TresCircleGeometry :args="[1, 16]"></TresCircleGeometry>
-    <TresMeshBasicMaterial :color="'red'" :side="2"></TresMeshBasicMaterial>
+  <TresMesh :position="[0, 0, 0]" :rotate-y="Math.PI / 2" ref="refMesh">
+    <TresPlaneGeometry :args="[2, 2, 16, 16]"></TresPlaneGeometry>
+    <TresShaderMaterial
+      :vertex-shader="circleVertexShader"
+      :fragment-shader="circleFragmentShader"
+      :transparent="true"
+      :side="2"
+      :uniforms="uniforms"
+    ></TresShaderMaterial>
   </TresMesh>
 </template>
 
