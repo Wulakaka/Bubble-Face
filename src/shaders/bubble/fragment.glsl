@@ -32,6 +32,35 @@ vec3 coneIntersectionFromOrigin(vec3 position, vec3 vecA, vec3 vecB, float theta
     return intersection;
 }
 
+// 计算是否位于目标区域内
+bool isInsideCone(vec3 circleCenter, float circleRadius) {
+
+    vec3 cameraPos = uCameraPosition;
+    float sphereRadius = uSphereRadius;
+    vec3 sphereCenter = vec3(0.0);
+    vec3 refractPosition = vPosition;
+
+    vec3 viewDir = normalize(refractPosition - cameraPos);// 计算视线方向
+    vec3 normal = normalize(refractPosition - sphereCenter);// 计算球面法线
+
+    // 计算折射方向
+    vec3 refractDir = refract(viewDir, normal, 0.9);// 假设折射率为0.7
+
+    // 计算折射光线与圆心平面的交点
+    float t = dot(circleCenter - refractPosition, normal) / dot(refractDir, normal);
+    vec3 refractPoint = refractPosition + t * refractDir;
+
+    // 检查折射点是否在圆内
+    if (length(refractPoint - circleCenter) < circleRadius) {
+        // 夹角小于九十度才显示
+        if (dot(viewDir, normal) < 0.0) {
+            return true;// 在圆内部，显示红色
+        }
+    }
+    return false;
+
+}
+
 
 void main() {
     vec3 normal = normalize(vNormal);
@@ -45,32 +74,8 @@ void main() {
     intensity *= 0.5;
     vec4 color = vec4(1.0) * intensity;
 
-
-    // 此 camera position 为最终锁定的摄像机位置
-    vec3 cameraPos= uCameraPosition;
-    float sphereRadius = uSphereRadius;
-    vec3 sphereCenter = vec3(0.0);
-    vec3 circleCenter = uCircleCenter;
-    float circleRadius = uCircleRadius;
-    // 折射点，也就是当前位置
-    vec3 refractPosition = vPosition;
-
-    vec3 viewDir = normalize(refractPosition - cameraPos); // 计算视线方向
-//    vec3 normal = normalize(fragPos - sphereCenter); // 计算球面法线
-
-    // 计算折射方向
-    vec3 refractDir = refract(viewDir, normal, 0.9); // 假设折射率为0.7
-
-    // 计算折射光线与圆心平面的交点
-    float t = dot(circleCenter - refractPosition, normal) / dot(refractDir, normal);
-    vec3 refractPoint = refractPosition + t * refractDir;
-
-    // 检查折射点是否在圆内
-    if (length(refractPoint - circleCenter) < circleRadius) {
-        // 夹角小于九十度才显示
-        if(dot(viewDir, normal) < 0.0) {
-            color = vec4(1, 0, 0, 1); // 在圆内部，显示红色
-        }
+    if (isInsideCone(uCircleCenter, uCircleRadius)) {
+        color = vec4(1, 0, 0, 1);
     }
 
     gl_FragColor = color;
