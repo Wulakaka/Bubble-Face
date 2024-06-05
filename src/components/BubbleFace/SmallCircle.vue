@@ -4,33 +4,62 @@ import circleFragmentShader from '@/shaders/circle/fragment.glsl'
 import * as THREE from 'three'
 import { useRenderLoop } from '@tresjs/core'
 import { ref } from 'vue'
+import circleRefractVertexShader from '@/shaders/circleRefract/vertex.glsl'
+import circleRefractFragmentShader from '@/shaders/circleRefract/fragment.glsl'
+
+const props = defineProps<{
+  r: number
+  y: number
+  z: number
+  speed: number
+}>()
+
+const color = new THREE.Color().setHSL(Math.random(), Math.random(), 0.5)
 
 const uniforms = {
-  uSize: new THREE.Uniform(new THREE.Vector2(2, 2)),
   uCameraPosition: new THREE.Uniform(new THREE.Vector3(50, 0, 0)),
-  uSphereRadius: new THREE.Uniform(10)
+  uSphereRadius: new THREE.Uniform(10),
+  uCircleCenter: new THREE.Uniform(new THREE.Vector3(0, 0, props.z)),
+  uCircleRadius: new THREE.Uniform(props.r),
+  uColor: new THREE.Uniform(color)
 }
 
 const { onLoop } = useRenderLoop()
 
 onLoop(({ delta, elapsed }) => {
   // 将在每一帧运行 ~ 60FPS（取决于您的显示器）
-  refMesh.value.position.y = -15 + ((elapsed * 2) % 30)
+  const y = -15 + ((elapsed * props.speed) % 30) + props.y
+  refMesh.value.position.y = y
+  uniforms.uCircleCenter.value.y = y
 })
 
 const refMesh = ref()
 </script>
 
 <template>
-  <TresMesh :position="[0, 0, 0]" :rotate-y="Math.PI / 2" ref="refMesh">
-    <TresPlaneGeometry :args="[2, 2, 16, 16]"></TresPlaneGeometry>
+  <TresMesh :position="[0, 0, z]" :rotate-y="Math.PI / 2" ref="refMesh">
+    <TresPlaneGeometry :args="[r * 2, r * 2, 16, 16]"></TresPlaneGeometry>
     <TresShaderMaterial
       :vertex-shader="circleVertexShader"
       :fragment-shader="circleFragmentShader"
       :transparent="true"
       :side="2"
-      :uniforms="uniforms"
+      :depth-write="false"
+      :uniforms="{
+        uColor: new THREE.Uniform(color)
+      }"
     ></TresShaderMaterial>
+  </TresMesh>
+  <TresMesh>
+    <TresSphereGeometry :args="[10, 32, 16, Math.PI / 2, Math.PI]" />
+    <TresShaderMaterial
+      :transparent="true"
+      :vertex-shader="circleRefractVertexShader"
+      :fragment-shader="circleRefractFragmentShader"
+      :uniforms="uniforms"
+      :depth-write="false"
+      :side="2"
+    />
   </TresMesh>
 </template>
 
