@@ -14,12 +14,15 @@ const props = defineProps<{
   speed: number
 }>()
 
-const color = new THREE.Color().setHSL(Math.random(), Math.random(), 0.5)
+const h = Math.random()
+const color = new THREE.Color().setHSL(h, 1, 0.5)
+
+const circleCenterX = -10
 
 const uniforms = {
-  uCameraPosition: new THREE.Uniform(new THREE.Vector3(50, 0, 0)),
+  uCameraPosition: new THREE.Uniform(new THREE.Vector3(30, 0, 0)),
   uSphereRadius: new THREE.Uniform(10),
-  uCircleCenter: new THREE.Uniform(new THREE.Vector3(0, 0, props.z)),
+  uCircleCenter: new THREE.Uniform(new THREE.Vector3(circleCenterX, 0, props.z)),
   uCircleRadius: new THREE.Uniform(props.r),
   uColor: new THREE.Uniform(color)
 }
@@ -31,13 +34,14 @@ onLoop(({ delta, elapsed }) => {
   const y = -15 + ((elapsed * props.speed) % 30) + props.y
   refMesh.value.position.y = y
   uniforms.uCircleCenter.value.y = y
+  uniforms.uColor.value.setHSL((elapsed * 0.05 + h) % 1, 1, 0.5)
 })
 
 const refMesh = ref()
 </script>
 
 <template>
-  <TresMesh :position="[0, 0, z]" :rotate-y="Math.PI / 2" ref="refMesh">
+  <TresMesh :position="[circleCenterX, 0, z]" :rotate-y="Math.PI / 2" ref="refMesh">
     <TresPlaneGeometry :args="[r * 2, r * 2, 16, 16]"></TresPlaneGeometry>
     <TresShaderMaterial
       :vertex-shader="circleVertexShader"
@@ -45,9 +49,7 @@ const refMesh = ref()
       :transparent="true"
       :side="2"
       :depth-write="false"
-      :uniforms="{
-        uColor: new THREE.Uniform(color)
-      }"
+      :uniforms="uniforms"
     ></TresShaderMaterial>
   </TresMesh>
   <TresMesh>

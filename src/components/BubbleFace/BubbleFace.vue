@@ -5,7 +5,7 @@ import TheBubble from '@/components/BubbleFace/TheBubble.vue'
 import SmallCircle from '@/components/BubbleFace/SmallCircle.vue'
 
 const list = new Array(10).fill(null).map(() => ({
-  r: Math.random() * 2,
+  r: Math.random() + 1,
   y: Math.random() * 4 - 2,
   z: Math.random() * 20 - 10,
   speed: Math.random() * 10 + 2

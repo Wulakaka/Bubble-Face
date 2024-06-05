@@ -37,11 +37,61 @@ bool isInsideCone(vec3 circleCenter, float circleRadius) {
     vec3 normal = normalize(refractPosition - sphereCenter);// 计算球面法线
 
     // 计算折射方向
-    vec3 refractDir = refract(viewDir, normal, 0.9);// 假设折射率为0.7
+    vec3 refractDir = refract(viewDir, normal, 0.7);// 假设折射率为0.7
 
     // 计算折射光线与圆心平面的交点
     float t = dot(circleCenter - refractPosition, normal) / dot(refractDir, normal);
     vec3 refractPoint = refractPosition + t * refractDir;
+
+    // 检查折射点是否在圆内
+    if (length(refractPoint - circleCenter) < circleRadius) {
+        // 夹角小于九十度才显示
+        if (dot(viewDir, normal) < 0.0) {
+            return true;// 在圆内部，显示红色
+        }
+    }
+    return false;
+
+}
+// 计算是否位于目标区域内
+// circleCenter: 投影圆心
+// circleRadius: 投影圆半径
+// eta: 折射率
+bool isInsideCone2(vec3 circleCenter, float circleRadius, float eta) {
+
+    vec3 cameraPos = uCameraPosition;
+    float sphereRadius = uSphereRadius;
+    vec3 sphereCenter = vec3(0.0);
+    vec3 refractPosition1 = vPosition;
+
+    vec3 viewDir = normalize(refractPosition1 - cameraPos);// 计算视线方向
+    vec3 normal = normalize(refractPosition1 - sphereCenter);// 计算球面法线
+
+    // 计算折射方向
+    vec3 refractDir = refract(viewDir, normal, eta);
+
+    float a = dot(refractDir, refractDir);
+    float b = 2.0 * dot(refractPosition1, refractDir);
+    float c = dot(refractPosition1, refractPosition1) - sphereRadius * sphereRadius;
+    float discriminant = b * b - 4.0 * (a * c);
+    if(discriminant < 0.0) {
+        return false;
+    }
+
+    float t1 = (-b + sqrt(discriminant)) / 2.0 / a;
+    float t2 = (-b - sqrt(discriminant)) / 2.0 / a;
+
+    float x = t1 == 0.0 ? t2 : t1;
+
+    vec3 refractPosition2 = refractPosition1 + x * refractDir;
+    vec3 normal2 = normalize(refractPosition2 - sphereCenter);
+
+    vec3 refractDir2 = refract(refractDir, -normal2, 1.0 / eta);
+
+
+    // 计算折射光线与圆心平面的交点
+    float t = dot(circleCenter - refractPosition2, normal) / dot(refractDir2, normal);
+    vec3 refractPoint = refractPosition2 + t * refractDir2;
 
     // 检查折射点是否在圆内
     if (length(refractPoint - circleCenter) < circleRadius) {
@@ -61,7 +111,7 @@ void main() {
 
     vec4 color = vec4(0);
 
-    if (isInsideCone(uCircleCenter, uCircleRadius)) {
+    if (isInsideCone2(uCircleCenter, uCircleRadius, 0.7)) {
         color = vec4(uColor, 1.0);
     }
 
