@@ -53,13 +53,13 @@ bool isInsideCone(vec3 circleCenter, float circleRadius) {
     return false;
 
 }
-// 计算是否位于目标区域内
+// 计算经过两次折射是否位于目标区域内
+// cameraPos： 摄像机位置
 // circleCenter: 投影圆心
 // circleRadius: 投影圆半径
 // eta: 折射率
-bool isInsideCone2(vec3 circleCenter, float circleRadius, float eta) {
+bool isInsideCone2(vec3 cameraPos, vec3 circleCenter, float circleRadius, float eta) {
 
-    vec3 cameraPos = uCameraPosition;
     float sphereRadius = uSphereRadius;
     vec3 sphereCenter = vec3(0.0);
     vec3 refractPosition1 = vPosition;
@@ -111,7 +111,7 @@ void main() {
 
     vec4 color = vec4(0);
 
-    if (isInsideCone2(uCircleCenter, uCircleRadius, 0.7)) {
+    if (isInsideCone2(cameraPosition, uCircleCenter, uCircleRadius, 0.7)) {
         color = vec4(uColor, 1.0);
     }
 

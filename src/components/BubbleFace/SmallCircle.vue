@@ -53,7 +53,7 @@ const refMesh = ref()
     ></TresShaderMaterial>
   </TresMesh>
   <TresMesh>
-    <TresSphereGeometry :args="[10, 32, 16, Math.PI / 2, Math.PI]" />
+    <TresSphereGeometry :args="[10, 32, 16]" />
     <TresShaderMaterial
       :transparent="true"
       :vertex-shader="circleRefractVertexShader"
