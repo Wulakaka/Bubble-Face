@@ -111,7 +111,7 @@ void main() {
 
     vec4 color = vec4(0);
 
-    if (isInsideCone2(cameraPosition, uCircleCenter, uCircleRadius, 0.7)) {
+    if (isInsideCone2(cameraPosition, uCircleCenter, uCircleRadius, 0.95)) {
         color = vec4(uColor, 1.0);
     }
 

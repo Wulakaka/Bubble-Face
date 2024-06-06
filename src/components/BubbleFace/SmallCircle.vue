@@ -3,9 +3,10 @@ import circleVertexShader from '@/shaders/circle/vertex.glsl'
 import circleFragmentShader from '@/shaders/circle/fragment.glsl'
 import * as THREE from 'three'
 import { useRenderLoop } from '@tresjs/core'
-import { ref } from 'vue'
+import { ref, shallowRef } from 'vue'
 import circleRefractVertexShader from '@/shaders/circleRefract/vertex.glsl'
 import circleRefractFragmentShader from '@/shaders/circleRefract/fragment.glsl'
+import useSmallCircleObject from '@/compositions/useSmallCircleObject'
 
 const props = defineProps<{
   r: number
@@ -13,6 +14,8 @@ const props = defineProps<{
   z: number
   speed: number
 }>()
+
+const { planeGeometry, sphereGeometry } = useSmallCircleObject()
 
 const h = Math.random()
 const color = new THREE.Color().setHSL(h, 1, 0.5)
@@ -37,12 +40,13 @@ onLoop(({ delta, elapsed }) => {
   uniforms.uColor.value.setHSL((elapsed * 0.05 + h) % 1, 1, 0.5)
 })
 
-const refMesh = ref()
+const refMesh = shallowRef()
 </script>
 
 <template>
-  <TresMesh :position="[circleCenterX, 0, z]" :rotate-y="Math.PI / 2" ref="refMesh">
-    <TresPlaneGeometry :args="[r * 2, r * 2, 16, 16]"></TresPlaneGeometry>
+  <TresMesh :scale="r * 2" :position="[circleCenterX, 0, z]" :rotate-y="Math.PI / 2" ref="refMesh">
+    <primitive :object="planeGeometry" />
+    <!--    <TresPlaneGeometry :args="[1, 1, 16, 16]"></TresPlaneGeometry>-->
     <TresShaderMaterial
       :vertex-shader="circleVertexShader"
       :fragment-shader="circleFragmentShader"
@@ -53,7 +57,8 @@ const refMesh = ref()
     ></TresShaderMaterial>
   </TresMesh>
   <TresMesh>
-    <TresSphereGeometry :args="[10, 32, 16]" />
+    <primitive :object="sphereGeometry" />
+    <!--    <TresSphereGeometry :args="[10, 32, 16]" />-->
     <TresShaderMaterial
       :transparent="true"
       :vertex-shader="circleRefractVertexShader"
