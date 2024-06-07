@@ -14,11 +14,10 @@ void main() {
     vec3 viewDirection = normalize(cameraPosition - vPosition);
 
     float intensity = 1.0 - dot(normal, viewDirection);
-    intensity = remap(intensity, 0.3, 0.9, 0.0, 1.0);
     // 让变暗的区域更柔和
     intensity = smoothstep(0.0, 1.0, intensity);
-    intensity = clamp(intensity, 0.0, 1.0);
-    intensity *= 0.5;
+    intensity = pow(intensity, 3.0);
+    intensity *= 0.7;
     vec4 color = vec4(1.0) * intensity;
 
     gl_FragColor = color;
