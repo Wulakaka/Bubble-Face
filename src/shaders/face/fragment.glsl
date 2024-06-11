@@ -31,7 +31,7 @@ void main() {
     float split = 100.0;
     // 最远处 edge 为 0.5，最近处 edge 为 1.0
     // 无色区域从 0.5 * 0.5 的方块过渡为两个 0.5 * 1.0 的矩形构成的 L 形
-    float edge = 1.0 - gradient * 0.5;
+    float edge = 0.5 + gradient * 0.5;
     uv *= split;
     uv = mod(uv, 1.0);
     float colorX = 1.0 - step(edge, uv.x);
@@ -39,7 +39,7 @@ void main() {
     float color1 = colorX * colorY;
     float color2 = (1.0 -step(0.5, uv.x))* (1.0 - step(edge, uv.y));
     float color = color1 + color2;
-    color = 1.0 - clamp(color, 0.0, 1.0);
+    color = clamp(color, 0.0, 1.0);
 
     gl_FragColor = vec4(vec3(color), alpha);
 
